@@ -2,6 +2,7 @@ services:
   postgres-db:
     image: postgres:14
     container_name: my-postgres
+    restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
@@ -14,14 +15,15 @@ services:
   postgres-client:
     image: postgres:14
     container_name: psql-client
+    restart: unless-stopped
     depends_on:
       - postgres-db
-    entrypoint: [ "tail", "-f", "/dev/null" ]
+    entrypoint: ["tail", "-f", "/dev/null"]
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: my-pgadmin
-    restart: always
+    restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin123
@@ -31,12 +33,14 @@ services:
   redis:
     image: redis:7
     container_name: redis_cache
+    restart: unless-stopped
     ports:
       - "6379:6379"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
     container_name: zookeeper
+    restart: unless-stopped
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -46,6 +50,7 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.4.0
     container_name: kafka
+    restart: unless-stopped
     depends_on:
       - zookeeper
     ports:
@@ -53,7 +58,7 @@ services:
       - "9102:9102"
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
@@ -63,10 +68,11 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_JMX_PORT: 9102
       KAFKA_JMX_HOSTNAME: localhost
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
     healthcheck:
-      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:29092 --list"]
+      test:
+        ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:29092 --list"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -76,6 +82,7 @@ services:
     build:
       context: ./
     container_name: bookstore_springboot_app
+    restart: unless-stopped
     depends_on:
       postgres-db:
         condition: service_started
@@ -120,6 +127,7 @@ services:
         # REACT_APP_STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
         REACT_APP_STRIPE_PUBLISHABLE_KEY: your-stripe-publishable-key
     container_name: Frontend
+    restart: unless-stopped
     ports:
       - "3000:80"
     depends_on:
@@ -131,24 +139,26 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
+    restart: unless-stopped
     ports:
       - "9090:9090"
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--storage.tsdb.retention.time=200h'
-      - '--web.enable-lifecycle'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--storage.tsdb.retention.time=200h"
+      - "--web.enable-lifecycle"
     depends_on:
       - bookstore_springboot_app
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    restart: unless-stopped
     ports:
       - "3001:3000"
     environment:
@@ -165,15 +175,16 @@ services:
   alertmanager:
     image: prom/alertmanager:latest
     container_name: alertmanager
+    restart: unless-stopped
     ports:
       - "9093:9093"
     volumes:
       - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml
       - alertmanager_data:/alertmanager
     command:
-      - '--config.file=/etc/alertmanager/alertmanager.yml'
-      - '--storage.path=/alertmanager'
-      - '--web.listen-address=:9093'
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager"
+      - "--web.listen-address=:9093"
 
 volumes:
   postgres_data:
