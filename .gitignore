@@ -118,3 +118,15 @@ dist/
 *.log
 *.tmp
 *.temp
+
+# ===================
+# 🏗️ Terraform
+# ===================
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+*.tfvars.json
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
