@@ -3,18 +3,16 @@ name: Build and Push Docker Images to AWS ECR
 on:
   push:
     branches:
-      - firchanges  # Trigger on pushes to this branch
+      - firchanges
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -22,22 +20,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # Step 3: Login to Amazon ECR
-      # added
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      # Step 4: Build and push Backend Docker image
       - name: Build and Push Backend Docker Image
         run: |
-          docker build -t ${{ secrets.ECR_BACKEND_REPO }} .
+          docker build -t ${{ secrets.ECR_BACKEND_REPO }} -f Dockerfile ./src
           docker tag ${{ secrets.ECR_BACKEND_REPO }}:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_BACKEND_REPO }}:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_BACKEND_REPO }}:latest
 
-      # Step 5: Build and push Frontend Docker image
       - name: Build and Push Frontend Docker Image
         run: |
-          docker build -t ${{ secrets.ECR_FRONTEND_REPO }} ./Frontend
+          docker build -t ${{ secrets.ECR_FRONTEND_REPO }} -f Dockerfile ./Frontend
           docker tag ${{ secrets.ECR_FRONTEND_REPO }}:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_FRONTEND_REPO }}:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_FRONTEND_REPO }}:latest
