@@ -18,7 +18,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1   # <-- FIXED REGION
+          aws-region: eu-north-1
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -26,14 +26,12 @@ jobs:
 
       - name: Build and Push Backend Docker Image
         run: |
-          docker build -t ${{ secrets.ECR_BACKEND_REPO }} ./backend
-          docker tag ${{ secrets.ECR_BACKEND_REPO }}:latest \
-            ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_BACKEND_REPO }}:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_BACKEND_REPO }}:latest
+          docker build -t bookstore-backend ./backend
+          docker tag bookstore-backend:latest ${{ steps.login-ecr.outputs.registry }}/bookstore-backend:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/bookstore-backend:latest
 
       - name: Build and Push Frontend Docker Image
         run: |
-          docker build -t ${{ secrets.ECR_FRONTEND_REPO }} ./frontend
-          docker tag ${{ secrets.ECR_FRONTEND_REPO }}:latest \
-            ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_FRONTEND_REPO }}:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_FRONTEND_REPO }}:latest
+          docker build -t bookstore-frontend ./frontend
+          docker tag bookstore-frontend:latest ${{ steps.login-ecr.outputs.registry }}/bookstore-frontend:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/bookstore-frontend:latest
