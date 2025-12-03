@@ -30,8 +30,14 @@ jobs:
           docker tag bookstore-backend:latest ${{ steps.login-ecr.outputs.registry }}/bookstore-backend:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/bookstore-backend:latest
 
+            - name: Build and Push Backend Docker Image
+        run: |
+          docker build -t ${{ secrets.ECR_BACKEND_REPO }} .
+          docker tag ${{ secrets.ECR_BACKEND_REPO }}:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_BACKEND_REPO }}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_BACKEND_REPO }}:latest
+
       - name: Build and Push Frontend Docker Image
         run: |
-          docker build -t bookstore-frontend ./frontend
-          docker tag bookstore-frontend:latest ${{ steps.login-ecr.outputs.registry }}/bookstore-frontend:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/bookstore-frontend:latest
+          docker build -t ${{ secrets.ECR_FRONTEND_REPO }} ./Frontend
+          docker tag ${{ secrets.ECR_FRONTEND_REPO }}:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_FRONTEND_REPO }}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_FRONTEND_REPO }}:latest
