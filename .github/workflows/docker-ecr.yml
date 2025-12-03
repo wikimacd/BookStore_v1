@@ -23,6 +23,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       # Step 3: Login to Amazon ECR
+      # added
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
