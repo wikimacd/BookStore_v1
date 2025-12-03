@@ -15,7 +15,7 @@ resource "local_file" "ssh_key" {
 }
 
 resource "aws_instance" "app_server" {
-  ami           = "ami-0c7217cdde317cfec" # Ubuntu 22.04 LTS in us-east-1
+  ami           = "ami-0744568de95a42bd6" # Ubuntu 22.04 LTS in us-east-1
   instance_type = "t3.medium"
   subnet_id     = aws_subnet.public.id
   key_name      = aws_key_pair.kp.key_name
