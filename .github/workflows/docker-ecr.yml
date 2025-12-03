@@ -32,6 +32,6 @@ jobs:
       # Build
       - name: Build and Push Frontend Docker Image
         run: |
-          docker build -t ${{ secrets.ECR_BACKEND_REPO }} -f Dockerfile .
-          docker tag ${{ secrets.ECR_BACKEND_REPO }}:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_BACKEND_REPO }}:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_BACKEND_REPO }}:latest
+          docker build -t ${{ secrets.ECR_FRONTEND_REPO }} -f Dockerfile ./Frontend
+          docker tag ${{ secrets.ECR_FRONTEND_REPO }}:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_FRONTEND_REPO }}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_FRONTEND_REPO }}:latest
