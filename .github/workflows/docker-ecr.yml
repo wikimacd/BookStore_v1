@@ -26,7 +26,7 @@ jobs:
 
       - name: Build and Push Backend Docker Image
         run: |
-          docker build -t ${{ secrets.ECR_BACKEND_REPO }} -f Dockerfile ./src
+          docker build -t ${{ secrets.ECR_BACKEND_REPO }} -f Dockerfile .
           docker tag ${{ secrets.ECR_BACKEND_REPO }}:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_BACKEND_REPO }}:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_BACKEND_REPO }}:latest
       # Build
