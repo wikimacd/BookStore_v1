@@ -62,20 +62,20 @@ services:
       start_period: 40s
 
   bookstore_backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: bookstore_backend
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-    depends_on:
-      - postgres-db
-      - redis
-      - kafka
-# test
+  build:
+    context: .  # Make sure this points to BookStore_v1 folder
+    dockerfile: Dockerfile
+  container_name: bookstore_backend
+  restart: unless-stopped
+  ports:
+    - "8080:8080"
+  environment:
+    SPRING_PROFILES_ACTIVE: docker
+  depends_on:
+    - postgres-db
+    - redis
+    - kafka
+
   frontend:
     build:
       context: ./Frontend
