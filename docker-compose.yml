@@ -75,7 +75,7 @@ services:
       - postgres-db
       - redis
       - kafka
-
+# test
   frontend:
     build:
       context: ./Frontend
